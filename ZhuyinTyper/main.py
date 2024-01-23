@@ -3,16 +3,12 @@ import pygame
 import random
 import os
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 600, 300
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 CENTER = (WIDTH / 2 - 64, HEIGHT / 2 - 64)
-
-pygame.display.set_caption("Zhuyin Typer")
-logo_icon = pygame.image.load("assets/logo_small.png")
-pygame.display.set_icon(logo_icon)
-
-FPS = 60
 BACKGROUND_COLOR = (255, 255, 255)
+USER_CHOICE_DISPLAY_LOCATION = (5, 5)
+USER_CHOICE_IMG_DIM = (32, 32)
 
 zhuyin_key_mapping = {pygame.K_1: 'b', pygame.K_q: 'p', pygame.K_a: 'm', pygame.K_z: 'f',
                       pygame.K_2: 'd', pygame.K_w: 't', pygame.K_s: 'n', pygame.K_x: 'l',
@@ -39,7 +35,12 @@ zhuyin_symbols = ['b', 'p', 'm', 'f',
                   'er', '1t']
 
 zhuyin_img_map = {}
-actual_choice_map = {}
+small_zhuyin_img_map = {}
+
+
+pygame.display.set_caption("Zhuyin Typer")
+logo_icon = pygame.image.load("assets/favicon.png")
+pygame.display.set_icon(logo_icon)
 
 
 def load_zhuyin_image(name):
@@ -49,44 +50,54 @@ def load_zhuyin_image(name):
 def load_maps():
     for name in zhuyin_symbols:
         zhuyin_img_map[name] = load_zhuyin_image(name)
-        actual_choice_map[name] = pygame.transform.scale(zhuyin_img_map[name], (32, 32))
+        small_zhuyin_img_map[name] = pygame.transform.scale(zhuyin_img_map[name], USER_CHOICE_IMG_DIM)
 
 
-def draw_window(random_choice, actual_choice):
+def draw_window(random_symbol_img, user_choice_img):
     WIN.fill(BACKGROUND_COLOR)
 
-    WIN.blit(random_choice, CENTER)
+    WIN.blit(random_symbol_img, CENTER)
 
-    if actual_choice is not None:
-        WIN.blit(actual_choice, (5, 5))
+    if user_choice_img is not None:
+        WIN.blit(user_choice_img, USER_CHOICE_DISPLAY_LOCATION)
 
     pygame.display.update()
 
 
 async def main():
-    rand_choice = random.choice(zhuyin_symbols)
-    actual_choice = None
+    random_symbol = random.choice(zhuyin_symbols)
 
-    clock = pygame.time.Clock()
+    user_choice = None
+    previous_choice = None
+
     running = True
+    updated = True
 
     while running:
-        clock.tick(FPS)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
                 key = event.key
-                z_key = None
-                if key in zhuyin_key_mapping:
-                    z_key = zhuyin_key_mapping[key]
-                if z_key == rand_choice:
-                    rand_choice = random.choice(zhuyin_symbols)
-                if z_key is not None:
-                    actual_choice = actual_choice_map[z_key]
 
-        draw_window(zhuyin_img_map[rand_choice], actual_choice)
+                selected_symbol = zhuyin_key_mapping.get(key, None)
+
+                if selected_symbol == random_symbol:
+                    random_symbol = random.choice(zhuyin_symbols)
+                    updated = True
+                if selected_symbol is not None and selected_symbol != previous_choice:
+                    user_choice = selected_symbol
+                    previous_choice = user_choice
+                    updated = True
+
+        if updated:
+            random_symbol_img = zhuyin_img_map[random_symbol]
+            user_choice_img = small_zhuyin_img_map.get(user_choice, None)
+
+            draw_window(random_symbol_img, user_choice_img)
+            updated = False
+
+        await asyncio.sleep(0)
 
     pygame.quit()
 
