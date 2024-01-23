@@ -38,6 +38,7 @@ zhuyin_img_map = {}
 small_zhuyin_img_map = {}
 
 
+pygame.init()
 pygame.display.set_caption("Zhuyin Typer")
 logo_icon = pygame.image.load("assets/favicon.png")
 pygame.display.set_icon(logo_icon)
