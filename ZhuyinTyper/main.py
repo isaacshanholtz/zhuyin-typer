@@ -2,6 +2,7 @@ import asyncio
 import pygame
 import random
 import os
+import time
 
 WIDTH, HEIGHT = 600, 300
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -66,6 +67,8 @@ def draw_window(random_symbol_img, user_choice_img):
 
 
 async def main():
+    random.seed(time.time())
+
     random_symbol = random.choice(zhuyin_symbols)
 
     user_choice = None
