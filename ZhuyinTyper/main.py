@@ -1,12 +1,11 @@
 import asyncio
 import pygame
 import random
-import os
 import time
 
 WIDTH, HEIGHT = 600, 300
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-CENTER = (WIDTH / 2 - 64, HEIGHT / 2 - 64)
+CENTER = (WIDTH / 2 - 45, HEIGHT / 2 - 45)
 BACKGROUND_COLOR = (255, 255, 255)
 USER_CHOICE_DISPLAY_LOCATION = (5, 5)
 USER_CHOICE_IMG_DIM = (32, 32)
@@ -40,25 +39,23 @@ small_zhuyin_img_map = {}
 
 pygame.init()
 pygame.font.init()
-zh_font = pygame.font.SysFont('youyuan', 70)
+
+zh_font_big = pygame.font.Font('fonts/HanWangKai-Font.ttf', 70)
+zh_font_small = pygame.font.Font('fonts/HanWangKai-Font.ttf', 30)
 
 pygame.display.set_caption("Zhuyin Typer")
 logo_icon = pygame.image.load("assets/favicon.png")
 pygame.display.set_icon(logo_icon)
 
 
-def load_zhuyin_image(name):
-    return pygame.image.load(os.path.join('assets', name + '.png'))
-
-
 def draw_window(random_symbol, user_choice):
     WIN.fill(BACKGROUND_COLOR)
-    rs_surface = zh_font.render(random_symbol, True, (0, 0, 0))
+    rs_surface = zh_font_big.render(random_symbol, True, (0, 0, 0))
 
     WIN.blit(rs_surface, CENTER)
 
     if user_choice is not None:
-        uc_surface = zh_font.render(user_choice, True, (0, 0, 0))
+        uc_surface = zh_font_small.render(user_choice, True, (0, 0, 0))
         WIN.blit(uc_surface, USER_CHOICE_DISPLAY_LOCATION)
 
     pygame.display.update()
