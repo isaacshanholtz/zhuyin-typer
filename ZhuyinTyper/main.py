@@ -11,35 +11,37 @@ BACKGROUND_COLOR = (255, 255, 255)
 USER_CHOICE_DISPLAY_LOCATION = (5, 5)
 USER_CHOICE_IMG_DIM = (32, 32)
 
-zhuyin_key_mapping = {pygame.K_1: 'b', pygame.K_q: 'p', pygame.K_a: 'm', pygame.K_z: 'f',
-                      pygame.K_2: 'd', pygame.K_w: 't', pygame.K_s: 'n', pygame.K_x: 'l',
-                      pygame.K_3: '3t', pygame.K_e: 'g', pygame.K_d: 'k', pygame.K_c: 'h',
-                      pygame.K_4: '4t', pygame.K_r: 'j', pygame.K_f: 'q', pygame.K_v: 'x',
-                      pygame.K_5: 'zh', pygame.K_t: 'ch', pygame.K_g: 'sh', pygame.K_b: 'r',
-                      pygame.K_6: '2t', pygame.K_y: 'z', pygame.K_h: 'c', pygame.K_n: 's',
-                      pygame.K_7: '5t', pygame.K_u: 'yi', pygame.K_j: 'wu', pygame.K_m: 'yu',
-                      pygame.K_8: 'a', pygame.K_i: 'o', pygame.K_k: 'e', pygame.K_COMMA: 'ye',
-                      pygame.K_9: 'ai', pygame.K_o: 'ei', pygame.K_l: 'ao', pygame.K_PERIOD: 'ou',
-                      pygame.K_0: 'an', pygame.K_p: 'en', pygame.K_SEMICOLON: 'ang', pygame.K_SLASH: 'eng',
-                      pygame.K_MINUS: 'er', pygame.K_SPACE: '1t'}
+zhuyin_key_mapping = {pygame.K_1: 'ㄅ', pygame.K_q: 'ㄆ', pygame.K_a: 'ㄇ', pygame.K_z: 'ㄈ',
+                      pygame.K_2: 'ㄉ', pygame.K_w: 'ㄊ', pygame.K_s: 'ㄋ', pygame.K_x: 'ㄌ',
+                      pygame.K_3: 'ˇ', pygame.K_e: 'ㄍ', pygame.K_d: 'ㄎ', pygame.K_c: 'ㄏ',
+                      pygame.K_4: 'ˋ', pygame.K_r: 'ㄐ', pygame.K_f: 'ㄑ', pygame.K_v: 'ㄒ',
+                      pygame.K_5: 'ㄓ', pygame.K_t: 'ㄔ', pygame.K_g: 'ㄕ', pygame.K_b: 'ㄖ',
+                      pygame.K_6: 'ˊ', pygame.K_y: 'ㄗ', pygame.K_h: 'ㄘ', pygame.K_n: 'ㄙ',
+                      pygame.K_7: '·', pygame.K_u: 'ㄧ', pygame.K_j: 'ㄨ', pygame.K_m: 'ㄩ',
+                      pygame.K_8: 'ㄚ', pygame.K_i: 'ㄛ', pygame.K_k: 'ㄜ', pygame.K_COMMA: 'ㄝ',
+                      pygame.K_9: 'ㄞ', pygame.K_o: 'ㄟ', pygame.K_l: 'ㄠ', pygame.K_PERIOD: 'ㄡ',
+                      pygame.K_0: 'ㄢ', pygame.K_p: 'ㄣ', pygame.K_SEMICOLON: 'ㄤ', pygame.K_SLASH: 'ㄥ',
+                      pygame.K_MINUS: 'ㄦ'}
 
-zhuyin_symbols = ['b', 'p', 'm', 'f',
-                  'd', 't', 'n', 'l',
-                  '3t', 'g', 'k', 'h',
-                  '4t', 'j', 'q', 'x',
-                  'zh', 'ch', 'sh', 'r',
-                  '2t', 'z', 'c', 's',
-                  '5t', 'yi', 'wu', 'yu',
-                  'a', 'o', 'e', 'ye',
-                  'ai', 'ei', 'ao', 'ou',
-                  'an', 'en', 'ang', 'eng',
-                  'er', '1t']
+zhuyin_symbols = ['ㄅ', 'ㄆ', 'ㄇ', 'ㄈ',
+                  'ㄉ', 'ㄊ', 'ㄋ', 'ㄌ',
+                  'ˇ', 'ㄍ', 'ㄎ', 'ㄏ',
+                  'ˋ', 'ㄐ', 'ㄑ', 'ㄒ',
+                  'ㄓ', 'ㄔ', 'ㄕ', 'ㄖ',
+                  'ˊ', 'ㄗ', 'ㄘ', 'ㄙ',
+                  '·', 'ㄧ', 'ㄨ', 'ㄩ',
+                  'ㄚ', 'ㄛ', 'ㄜ', 'ㄝ',
+                  'ㄞ', 'ㄟ', 'ㄠ', 'ㄡ',
+                  'ㄢ', 'ㄣ', 'ㄤ', 'ㄥ',
+                  'ㄦ']
 
 zhuyin_img_map = {}
 small_zhuyin_img_map = {}
 
-
 pygame.init()
+pygame.font.init()
+zh_font = pygame.font.SysFont('youyuan', 70)
+
 pygame.display.set_caption("Zhuyin Typer")
 logo_icon = pygame.image.load("assets/favicon.png")
 pygame.display.set_icon(logo_icon)
@@ -49,19 +51,15 @@ def load_zhuyin_image(name):
     return pygame.image.load(os.path.join('assets', name + '.png'))
 
 
-def load_maps():
-    for name in zhuyin_symbols:
-        zhuyin_img_map[name] = load_zhuyin_image(name)
-        small_zhuyin_img_map[name] = pygame.transform.scale(zhuyin_img_map[name], USER_CHOICE_IMG_DIM)
-
-
-def draw_window(random_symbol_img, user_choice_img):
+def draw_window(random_symbol, user_choice):
     WIN.fill(BACKGROUND_COLOR)
+    rs_surface = zh_font.render(random_symbol, True, (0, 0, 0))
 
-    WIN.blit(random_symbol_img, CENTER)
+    WIN.blit(rs_surface, CENTER)
 
-    if user_choice_img is not None:
-        WIN.blit(user_choice_img, USER_CHOICE_DISPLAY_LOCATION)
+    if user_choice is not None:
+        uc_surface = zh_font.render(user_choice, True, (0, 0, 0))
+        WIN.blit(uc_surface, USER_CHOICE_DISPLAY_LOCATION)
 
     pygame.display.update()
 
@@ -95,10 +93,7 @@ async def main():
                     updated = True
 
         if updated:
-            random_symbol_img = zhuyin_img_map[random_symbol]
-            user_choice_img = small_zhuyin_img_map.get(user_choice, None)
-
-            draw_window(random_symbol_img, user_choice_img)
+            draw_window(random_symbol, user_choice)
             updated = False
 
         await asyncio.sleep(0)
@@ -107,5 +102,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    load_maps()
     asyncio.run(main())
